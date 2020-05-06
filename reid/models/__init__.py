@@ -12,6 +12,7 @@ __factory = {
     'resnet152': resnet152,
         'resnet50_rpp': resnet50_rpp,
     'resnet50_6stripe':resnet50_6stripe,
+    'ResNet_3stripe':ResNet_3stripe,
 }
 
 

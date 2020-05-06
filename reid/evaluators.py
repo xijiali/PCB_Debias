@@ -91,10 +91,10 @@ def extract_features_3stripes(model, data_loader, print_freq=10):
 
         outputs,Main_fs = extract_cnn_feature_3stripes(model, imgs)
         for fname, output,main_f, pid in zip(fnames, outputs,Main_fs, pids):
-            bs, c, _, _ = output.size()
-            qf0 = output[:, :, 0, :].view(bs, c)
-            qf1 = output[:, :, 1, :].view(bs, c)
-            qf2 = output[:, :, 2, :].view(bs, c)
+            bs, c, _= output.size()#[2048,6,1]
+            qf0 = output[:, 0, :].view(bs, c)
+            qf1 = output[:, 1, :].view(bs, c)
+            qf2 = output[:, 2, :].view(bs, c)
             features[fname] = output
             features_str0[fname] = qf0
             features_str1[fname] = qf1

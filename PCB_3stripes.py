@@ -184,7 +184,7 @@ if __name__ == '__main__':
                         help="train and val sets together for training, "
                              "val set alone for validation")
     # model
-    parser.add_argument('-a', '--arch', type=str, default='resnet50_6stripe',
+    parser.add_argument('-a', '--arch', type=str, default='ResNet_3stripe',
                         choices=models.names())
     parser.add_argument('--features', type=int, default=2048)
     parser.add_argument('--dropout', type=float, default=0.5)
