@@ -77,6 +77,11 @@ def extract_features_3stripes(model, data_loader, print_freq=10):
     data_time = AverageMeter()
 
     features = OrderedDict()
+    features_str0 = OrderedDict()
+    features_str1 = OrderedDict()
+    features_str2 = OrderedDict()
+
+
     main_fs=OrderedDict()
     labels = OrderedDict()
 
@@ -86,7 +91,15 @@ def extract_features_3stripes(model, data_loader, print_freq=10):
 
         outputs,Main_fs = extract_cnn_feature_3stripes(model, imgs)
         for fname, output,main_f, pid in zip(fnames, outputs,Main_fs, pids):
+            bs, c, _, _ = output.size()
+            qf0 = output[:, :, 0, :].view(bs, c)
+            qf1 = output[:, :, 1, :].view(bs, c)
+            qf2 = output[:, :, 2, :].view(bs, c)
             features[fname] = output
+            features_str0[fname] = qf0
+            features_str1[fname] = qf1
+            features_str2[fname] = qf2
+
             main_fs[fname]=main_f
             labels[fname] = pid
 
@@ -101,7 +114,7 @@ def extract_features_3stripes(model, data_loader, print_freq=10):
                           batch_time.val, batch_time.avg,
                           data_time.val, data_time.avg))
 
-    return features, labels,main_fs
+    return features, labels,main_fs,features_str0,features_str1,features_str2
 
 
 def pairwise_distance(query_features, gallery_features, query=None, gallery=None):
@@ -191,20 +204,13 @@ class Evaluator_3stripes(object):
 
     def evaluate(self, query_loader, gallery_loader, query, gallery):
         print('extracting query features\n')
-        query_features, _,main_qf = extract_features_3stripes(self.model, query_loader)
+        query_features, _,main_qf,qf0,qf1,qf2 = extract_features_3stripes(self.model, query_loader)
         print('extracting gallery features\n')
-        gallery_features, _,main_gf = extract_features_3stripes(self.model, gallery_loader)
+        gallery_features, _,main_gf,gf0,gf1,gf2 = extract_features_3stripes(self.model, gallery_loader)
         print('Disentangle.')
         distmat0=pairwise_distance(main_qf, main_gf, query, gallery)
         evaluate_all(distmat0, query=query, gallery=gallery)
         # stripe 0
-        bs,c,_,_=query_features.size()
-        qf0=query_features[:,:,0,:].view(bs,c)
-        qf1=query_features[:,:,1,:].view(bs,c)
-        qf2=query_features[:,:,2,:].view(bs,c)
-        gf0=gallery_features[:,:,0,:].view(bs,c)
-        gf1 = gallery_features[:, :, 1, :].view(bs, c)
-        gf2 = gallery_features[:, :, 2, :].view(bs, c)
         d1=pairwise_distance(qf0, gf0, query, gallery)
         d2=pairwise_distance(qf1, gf1, query, gallery)
         d3 = pairwise_distance(qf2, gf2, query, gallery)
