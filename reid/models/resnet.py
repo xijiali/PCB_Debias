@@ -7,7 +7,7 @@ import torchvision
 import torch
 from .mlp import MLP
 #from torch_deform_conv.layers import ConvOffset2D
-__all__ = ['ResNet', 'resnet18', 'resnet34', 'resnet50', 'resnet101','resnet50_6stripe','ResNet_3stripe',
+__all__ = ['ResNet', 'resnet18', 'resnet34', 'resnet50', 'resnet101','resnet50_6stripe','resnet50_3stripe',
            'resnet152']
 
 
@@ -630,6 +630,9 @@ def resnet50(**kwargs):
 
 def resnet50_6stripe(**kwargs):
     return ResNet_6stripe(50, **kwargs)
+
+def resnet50_3stripe(**kwargs):
+    return ResNet_3stripe(50, **kwargs)
 
 
 def resnet101(**kwargs):
